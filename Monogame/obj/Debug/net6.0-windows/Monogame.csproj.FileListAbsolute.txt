@@ -35,3 +35,4 @@ C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\refin
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\Monogame.pdb
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\Monogame.genruntimeconfig.cache
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\ref\Monogame.dll
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\hero_spritesheet.xnb

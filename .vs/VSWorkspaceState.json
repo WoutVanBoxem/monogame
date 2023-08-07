@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Monogame",
+    "\\Monogame\\Content"
   ],
-  "SelectedNode": "\\C:\\Users\\woutv\\Desktop\\monogame\\monogame",
+  "SelectedNode": "\\Monogame\\Game1.cs",
   "PreviewInSolutionExplorer": false
 }

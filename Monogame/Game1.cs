@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Media;
+
 
 namespace Monogame
 {
@@ -8,6 +10,13 @@ namespace Monogame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        Player player;
+        Rectangle floor;
+        Texture2D pixel;
+        Texture2D spriteSheet;
+        int frameWidth = 10;
+        int frameHeight = 10;
+
 
         public Game1()
         {
@@ -26,25 +35,57 @@ namespace Monogame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteSheet = Content.Load<Texture2D>("hero_spritesheet");
+            frameWidth = 80; 
+            frameHeight = 63; 
+            int playerX = 10; 
+            int playerY = _graphics.PreferredBackBufferHeight - 20 - frameHeight; 
+            player = new Player(new Vector2(playerX, playerY));
+            floor = new Rectangle(0, _graphics.PreferredBackBufferHeight - 20, _graphics.PreferredBackBufferWidth, 20);
 
-            // TODO: use this.Content to load your game content here
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
         }
+
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                player.Position -= new Vector2(2, 0);
+                player.FacingRight = false;
+                player.CurrentAnimation = Player.PlayerAnimation.Walking;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                player.Position += new Vector2(2, 0);
+                player.FacingRight = true;
+                player.CurrentAnimation = Player.PlayerAnimation.Walking;
+            }
+            else
+            {
+                player.CurrentAnimation = Player.PlayerAnimation.Standing;
+            }
+
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
 
+
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(texture: pixel, destinationRectangle: floor, color: Color.Black);
+            player.Draw(_spriteBatch, spriteSheet, frameWidth);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
