@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using System.Media;
 
 
@@ -16,6 +17,7 @@ namespace Monogame
         Texture2D spriteSheet;
         int frameWidth = 10;
         int frameHeight = 10;
+        List<Solid> solids = new List<Solid>();
 
 
         public Game1()
@@ -40,9 +42,9 @@ namespace Monogame
             frameHeight = 63; 
             int playerX = 10; 
             int playerY = _graphics.PreferredBackBufferHeight - 20 - frameHeight; 
-            player = new Player(new Vector2(playerX, playerY));
+            player = new Player(new Vector2(playerX, playerY), _graphics, frameWidth);
             floor = new Rectangle(0, _graphics.PreferredBackBufferHeight - 20, _graphics.PreferredBackBufferWidth, 20);
-
+            solids.Add(new Solid(floor));
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
         }
@@ -72,7 +74,7 @@ namespace Monogame
                 player.CurrentAnimation = Player.PlayerAnimation.Standing;
             }
 
-            player.Update(gameTime);
+            player.Update(gameTime, solids, keyboardState);
 
             base.Update(gameTime);
         }
