@@ -36,3 +36,10 @@ C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\Monog
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\Monogame.genruntimeconfig.cache
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\obj\Debug\net6.0-windows\ref\Monogame.dll
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\hero_spritesheet.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\DefaultFont.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\inGame.wma
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\inGame.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\menu.wma
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\menu.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\coin_sprite.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\finish.xnb

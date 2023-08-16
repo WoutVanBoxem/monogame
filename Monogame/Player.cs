@@ -19,11 +19,14 @@ public class Player
     public float JumpSpeed { get; set; }
     public GraphicsDeviceManager Graphics { get; set; }
     public int FrameWidth { get; set; }
+    public int FrameHeight { get; set; }
 
 
 
 
-    public Player(Vector2 position, GraphicsDeviceManager graphics, int framewidth)
+
+    public Player(Vector2 position, GraphicsDeviceManager graphics, int framewidth, int frameheight)
+
     {
         Position = position;
         CurrentFrame = 0;
@@ -33,6 +36,7 @@ public class Player
         IsJumping = false;
         Graphics = graphics;
         FrameWidth= framewidth;
+        FrameHeight= frameheight;
     }
 
     public void Draw(SpriteBatch spriteBatch, Texture2D spriteSheet, int frameWidth)
@@ -53,6 +57,13 @@ public class Player
         Standing,
         Walking
     }
+
+    public Rectangle GetBoundingBox()
+    {
+        return new Rectangle((int)Position.X, (int)Position.Y, FrameWidth, FrameHeight);
+
+    }
+
 
     public int GetFramesPerRow()
     {

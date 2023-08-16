@@ -4,9 +4,19 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/coin_sprite.png</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/File.spritefont</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/finish.png</File>
     <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/hero_spritesheet.png</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/inGame.mp3</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/menu.mp3</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File>DefaultFont.spritefont</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>
