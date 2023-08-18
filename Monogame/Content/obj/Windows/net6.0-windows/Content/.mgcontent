@@ -9,11 +9,17 @@
     <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/finish.png</File>
     <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/hero_spritesheet.png</File>
     <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/inGame.mp3</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/level1background.png</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/level2background.png</File>
     <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/menu.mp3</File>
+    <File>C:/Users/woutv/Desktop/monogame/monogame/Monogame/Content/shell.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
     <File>DefaultFont.spritefont</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

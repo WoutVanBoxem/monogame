@@ -43,3 +43,6 @@ C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Conte
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\menu.xnb
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\coin_sprite.xnb
 C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\finish.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\level1background.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\level2background.xnb
+C:\Users\woutv\Desktop\monogame\monogame\Monogame\bin\Debug\net6.0-windows\Content\shell.xnb

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using System.Media;
 
-
+namespace Monogame {
 public class FinishFlag
 {
     public Texture2D Sprite { get; set; }
@@ -34,3 +34,4 @@ public class FinishFlag
 
 }
 
+}

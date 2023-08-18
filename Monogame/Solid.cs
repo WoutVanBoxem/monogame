@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
+namespace Monogame { 
 public class Solid
 {
 	public Rectangle Bounds { get; set; }
@@ -8,4 +9,5 @@ public class Solid
 	{
 		Bounds= bounds;
 	}
+}
 }

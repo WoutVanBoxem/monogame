@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using System.Media;
 
+
+namespace Monogame {
 public class FallingBlock
 {
     public Vector2 Position { get; set; }
@@ -16,7 +18,7 @@ public class FallingBlock
     public FallingBlock(GraphicsDevice graphicsDevice, Vector2 position)
     {
         Sprite = new Texture2D(graphicsDevice, 1, 1);
-        Sprite.SetData(new[] { Color.SaddleBrown });  // dit maakt het donkerbruin
+        Sprite.SetData(new[] { Color.SaddleBrown }); 
         Position = position;
         IsActive = false;
     }
@@ -26,7 +28,7 @@ public class FallingBlock
         if (IsActive)
         {
             Vector2 newPosition = Position;
-            newPosition.Y += 8f; // snelheid waarmee de balk valt
+            newPosition.Y += 8f;
             Position = newPosition;
         }
     }
@@ -41,4 +43,5 @@ public class FallingBlock
     {
         return new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
     }
+}
 }

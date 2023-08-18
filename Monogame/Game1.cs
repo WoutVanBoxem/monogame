@@ -3,43 +3,47 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
-using System.Media;
+using System;
 
 
 namespace Monogame
 {
     public class Game1 : Game
     {
+        public ILevel CurrentLevel { get; set; }
+        public Player player;
+        public List<Bullet> bullets = new List<Bullet>();
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Player player;
-        Rectangle floor;
-        Texture2D pixel;
-        Texture2D spriteSheet;
-        int frameWidth = 10;
-        int frameHeight = 10;
-        List<Solid> solids = new List<Solid>();
-        SpriteFont defaultFont;
-        Rectangle startButtonRectangle;
-        Song menuSong;
-        Song gameSong;
-        Coin coin;
-        Texture2D coinSpriteSheet;
-        FallingBlock fallingBlock;
-        FinishFlag finishFlag;
-        Texture2D finishFlagSprite;
-
-
+        public Texture2D spriteSheet;
+        public int frameWidth = 80;
+        public int frameHeight = 10;
+        public List<Solid> solids = new List<Solid>();
+        public SpriteFont defaultFont;
+        public Rectangle startButtonRectangle;
+        public Song menuSong;
+        public Song gameSong;
+        public Texture2D pixel; 
+        public Rectangle floor;
+        public GameState CurrentGameState = GameState.Menu;
+        private TimeSpan bulletCooldown = TimeSpan.FromMilliseconds(200);
+        private TimeSpan lastBulletTime;
+        public GraphicsDeviceManager GraphicsManager => _graphics;
+        public int FrameWidth => frameWidth;
+        public int FrameHeight => frameHeight;
+        public Rectangle Level1ButtonRectangle;
+        public Rectangle Level2ButtonRectangle;
+        private TimeSpan lastStateChangeTime;
 
 
         public enum GameState
         {
             Menu,
             Playing,
-            Paused
+            Paused,
+            GameOver,
+            Win
         }
-
-        public GameState CurrentGameState = GameState.Menu;
 
         public Game1()
         {
@@ -50,43 +54,32 @@ namespace Monogame
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
+            CurrentLevel = new Level1(this);
+            CurrentLevel.LoadContent();
             defaultFont = Content.Load<SpriteFont>("DefaultFont");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteSheet = Content.Load<Texture2D>("hero_spritesheet");
-            coinSpriteSheet = Content.Load<Texture2D>("coin_sprite");
             menuSong = Content.Load<Song>("menu");
             gameSong = Content.Load<Song>("inGame");
-           
-            frameWidth = 80;
-            frameHeight = 63;
-            int playerX = 10;
-            int playerY = _graphics.PreferredBackBufferHeight - 20 - frameHeight;
-            player = new Player(new Vector2(playerX, playerY), _graphics, frameWidth, frameHeight);
             floor = new Rectangle(0, _graphics.PreferredBackBufferHeight - 20, _graphics.PreferredBackBufferWidth, 20);
             solids.Add(new Solid(floor));
-            pixel = new Texture2D(GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-            Vector2 startButtonPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 - 25);
-            startButtonRectangle = new Rectangle((int)startButtonPosition.X, (int)startButtonPosition.Y, 200, 50); // 200x50 is de grootte van de knop
-            Vector2 coinPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2 - 8, _graphics.PreferredBackBufferHeight - 110); // 8 is de helft van de munt breedte (16) en 32 is de hoogte van de munt boven de vloer.
-            coin = new Coin(coinSpriteSheet, coinPosition);
-            fallingBlock = new FallingBlock(GraphicsDevice, new Vector2(coin.Position.X - 50, -40));
-            finishFlagSprite = Content.Load<Texture2D>("finish");
-            finishFlag = new FinishFlag(finishFlagSprite,new Vector2(coinPosition.X + 350, coinPosition.Y));
+            Vector2 level1ButtonPosition = new Vector2(_graphics.PreferredBackBufferWidth / 3 - 100, _graphics.PreferredBackBufferHeight / 2 + 40);
+            Level1ButtonRectangle = new Rectangle((int)level1ButtonPosition.X, (int)level1ButtonPosition.Y, 200, 50);
 
+            Vector2 level2ButtonPosition = new Vector2(2 * _graphics.PreferredBackBufferWidth / 3 - 100, _graphics.PreferredBackBufferHeight / 2 + 40);
+            Level2ButtonRectangle = new Rectangle((int)level2ButtonPosition.X, (int)level2ButtonPosition.Y, 200, 50);
 
         }
 
-
         protected override void Update(GameTime gameTime)
         {
+            CurrentLevel.Update(gameTime);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -100,9 +93,14 @@ namespace Monogame
             }
             else if (keyboardState.IsKeyDown(Keys.Enter) && (CurrentGameState == GameState.Menu || CurrentGameState == GameState.Paused))
             {
-                CurrentGameState = GameState.Playing;
-                MediaPlayer.Stop();
-                MediaPlayer.Play(gameSong);
+                
+                if (gameTime.TotalGameTime - lastStateChangeTime > TimeSpan.FromMilliseconds(500))
+                {
+                    CurrentGameState = GameState.Playing;
+                    lastStateChangeTime = gameTime.TotalGameTime;  
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(gameSong);
+                }
             }
             if (CurrentGameState == GameState.Menu)
             {
@@ -119,64 +117,48 @@ namespace Monogame
                 }
             }
 
-            if (CurrentGameState == GameState.Playing)
+            if (CurrentGameState == GameState.Menu || CurrentGameState == GameState.Paused)
             {
-                coin.Update(gameTime);
+                MouseState mouseState = Mouse.GetState();
 
-                // Player update eerst
-                player.Update(gameTime, solids, keyboardState);
-
-                if (keyboardState.IsKeyDown(Keys.Left))
+                if (Level1ButtonRectangle.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    player.Position -= new Vector2(2, 0);
-                    player.FacingRight = false;
-                    player.CurrentAnimation = Player.PlayerAnimation.Walking;
+                    CurrentLevel = new Level1(this);
+                    CurrentLevel.LoadContent();
+                    CurrentGameState = GameState.Playing;
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(gameSong);
                 }
-                else if (keyboardState.IsKeyDown(Keys.Right))
+                else if (Level2ButtonRectangle.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    player.Position += new Vector2(2, 0);
-                    player.FacingRight = true;
-                    player.CurrentAnimation = Player.PlayerAnimation.Walking;
+                    CurrentLevel = new Level2(this);
+                    CurrentLevel.LoadContent();
+                    CurrentGameState = GameState.Playing;
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(gameSong);
                 }
-                else
-                {
-                    player.CurrentAnimation = Player.PlayerAnimation.Standing;
-                }
-
-                if (!coin.IsCollected && player.GetBoundingBox().Intersects(coin.GetBoundingBox()))
-                {
-                    coin.IsCollected = true;
-                }
-
-                // Controleren afstand tot coin en activeren van de balk
-                float distanceToCoin = Vector2.Distance(player.Position, coin.Position);
-                if (distanceToCoin < 120  && !fallingBlock.IsActive) // controleer of de balk niet al actief is
-                {
-                    fallingBlock.IsActive = true;
-                }
-                if (player.GetBoundingBox().Intersects(fallingBlock.GetBoundingBox()))
-                {
-                    ResetGame();
-                    CurrentGameState = GameState.Menu;
-                }
-                if (player.GetBoundingBox().Intersects(finishFlag.GetBoundingBox()))
-                {
-                    ResetGame();
-                    CurrentGameState = GameState.Menu;
-                }
-
-
-
-                // Update de vallende balk
-                fallingBlock.Update();
             }
-
-
+            if (CurrentGameState == GameState.GameOver)
+            {
+                if (keyboardState.IsKeyDown(Keys.Enter) && (gameTime.TotalGameTime - lastStateChangeTime > TimeSpan.FromMilliseconds(500)))
+                {
+                    player.HealthPoints = 5;
+                    CurrentGameState = GameState.Menu;
+                    lastStateChangeTime = gameTime.TotalGameTime;
+                }
+            }
+            if (CurrentGameState == GameState.Win)
+            {
+                if (keyboardState.IsKeyDown(Keys.Enter) && (gameTime.TotalGameTime - lastStateChangeTime > TimeSpan.FromMilliseconds(500)))
+                {
+                    player.HealthPoints = 5;
+                    CurrentGameState = GameState.Menu;
+                    lastStateChangeTime = gameTime.TotalGameTime;
+                }
+            }
 
             base.Update(gameTime);
         }
-
-
 
 
         protected override void Draw(GameTime gameTime)
@@ -184,53 +166,63 @@ namespace Monogame
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
 
+
+            CurrentLevel.Draw(_spriteBatch);
+
+
             _spriteBatch.Draw(texture: pixel, destinationRectangle: floor, color: Color.Black);
 
             if (CurrentGameState == GameState.Menu || CurrentGameState == GameState.Paused)
             {
-                _spriteBatch.Draw(pixel, startButtonRectangle, Color.Gray); // De grijze knop
+                _spriteBatch.Draw(pixel, startButtonRectangle, Color.Gray);
 
                 string buttonText = "Press enter to start";
                 Vector2 stringSize = defaultFont.MeasureString(buttonText);
                 Vector2 stringPosition = new Vector2(startButtonRectangle.Center.X - stringSize.X / 2, startButtonRectangle.Center.Y - stringSize.Y / 2);
 
-                _spriteBatch.DrawString(defaultFont, buttonText, stringPosition, Color.White); // Tekst in het midden van de knop
-            }
+                _spriteBatch.DrawString(defaultFont, buttonText, stringPosition, Color.White);
+                _spriteBatch.Draw(pixel, Level1ButtonRectangle, Color.Gray);
+                _spriteBatch.DrawString(defaultFont, "Level 1", new Vector2(Level1ButtonRectangle.Center.X - 30, Level1ButtonRectangle.Center.Y - 10), Color.White);
 
-            if (CurrentGameState == GameState.Playing)
+                _spriteBatch.Draw(pixel, Level2ButtonRectangle, Color.Gray);
+                _spriteBatch.DrawString(defaultFont, "Level 2", new Vector2(Level2ButtonRectangle.Center.X - 30, Level2ButtonRectangle.Center.Y - 10), Color.White);
+            }
+            if(CurrentGameState==GameState.GameOver)
             {
-                if (!coin.IsCollected)
-                {
-                    coin.Draw(_spriteBatch);
-                }
-
-                player.Draw(_spriteBatch, spriteSheet, frameWidth);
-                finishFlag.Draw(_spriteBatch);
-
+                string gameOverText = "Je hebt verloren! Druk op Enter om terug te gaan naar het hoofdmenu.";
+                Vector2 textSize = defaultFont.MeasureString(gameOverText); 
+                Vector2 position = new Vector2((GraphicsDevice.Viewport.Width - textSize.X) / 2, GraphicsDevice.Viewport.Height / 2);
+                _spriteBatch.DrawString(defaultFont, gameOverText, position, Color.Red);
             }
-            fallingBlock.Draw(_spriteBatch);
+            if (CurrentGameState == GameState.Win)
+            {
+                string winText = "Je hebt gewonnen! Druk op Enter om terug te gaan naar het hoofdmenu.";
+                Vector2 textSize = defaultFont.MeasureString(winText);
+                Vector2 position = new Vector2((GraphicsDevice.Viewport.Width - textSize.X) / 2, GraphicsDevice.Viewport.Height / 2);
+                _spriteBatch.DrawString(defaultFont, winText, position, Color.Green);
+            }
 
 
             _spriteBatch.End();
             base.Draw(gameTime);
         }
-        private void ResetGame()
+
+
+        public void ResetGame()  
         {
-            // Reset player
             int playerX = 10;
             int playerY = _graphics.PreferredBackBufferHeight - 20 - frameHeight;
             player = new Player(new Vector2(playerX, playerY), _graphics, frameWidth, frameHeight);
-
-            // Reset coin
-            Vector2 coinPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2 - 8, _graphics.PreferredBackBufferHeight - 110);
-            coin = new Coin(coinSpriteSheet, coinPosition);
-
-            // Reset falling block
-            fallingBlock = new FallingBlock(GraphicsDevice, new Vector2(coin.Position.X - 50, -40));
-
-            // Andere objecten die je wilt resetten...
         }
 
-
+        public void ShootBullet(Bullet.BulletDirection direction, Vector2 bulletStartingPosition, GameTime gameTime) 
+        {
+            if (gameTime.TotalGameTime - lastBulletTime > bulletCooldown)
+            {
+                Bullet bullet = new Bullet(bulletStartingPosition, direction, GraphicsDevice);
+                bullets.Add(bullet);
+                lastBulletTime = gameTime.TotalGameTime;
+            }
+        }
     }
 }
